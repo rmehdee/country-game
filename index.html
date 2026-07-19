@@ -1,0 +1,539 @@
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Guess the Country 🌍</title>
+<meta name="description" content="A fun flag-guessing game for kids. 5 levels, 10 flags each. Tap the right country!" />
+<meta name="theme-color" content="#5b21b6" />
+
+<style>
+  :root {
+    --bg1: #6d28d9;
+    --bg2: #2563eb;
+    --bg3: #db2777;
+    --card: #ffffff;
+    --ink: #1e1b2e;
+    --muted: #6b7280;
+    --good: #16a34a;
+    --good-bg: #dcfce7;
+    --bad: #e11d48;
+    --bad-bg: #ffe4e6;
+    --accent: #7c3aed;
+    --ring: rgba(124, 58, 237, 0.35);
+    --shadow: 0 20px 50px -12px rgba(31, 12, 60, 0.45);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+
+  body {
+    font-family: "Baloo 2", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    min-height: 100dvh;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2) 55%, var(--bg3));
+    background-attachment: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .blob { position: fixed; border-radius: 50%; filter: blur(50px); opacity: 0.35; z-index: 0; pointer-events: none; animation: float 14s ease-in-out infinite; }
+  .blob.a { width: 320px; height: 320px; background: #f472b6; top: -80px; left: -60px; }
+  .blob.b { width: 280px; height: 280px; background: #38bdf8; bottom: -90px; right: -70px; animation-delay: -5s; }
+  .blob.c { width: 220px; height: 220px; background: #a78bfa; bottom: 40px; left: -40px; animation-delay: -9s; }
+  @keyframes float { 0%,100% { transform: translate(0,0) scale(1);} 50% { transform: translate(25px,-30px) scale(1.08);} }
+
+  .app { position: relative; z-index: 1; width: 100%; max-width: 500px; }
+
+  .card { background: var(--card); border-radius: 26px; box-shadow: var(--shadow); padding: 24px 20px 26px; animation: pop 0.5s cubic-bezier(0.22,1,0.36,1); }
+  @keyframes pop { from { opacity: 0; transform: translateY(16px) scale(0.97);} to { opacity: 1; transform: none;} }
+  .hide { display: none !important; }
+
+  /* ---------- Start screen ---------- */
+  .hero-emoji { font-size: 66px; line-height: 1; text-align: center; animation: spin 6s ease-in-out infinite; }
+  @keyframes spin { 0%,100% { transform: rotate(-8deg);} 50% { transform: rotate(8deg);} }
+
+  h1 {
+    text-align: center; font-size: clamp(28px, 8vw, 40px); font-weight: 800; letter-spacing: -0.02em; margin-top: 10px;
+    background: linear-gradient(120deg, var(--bg1), var(--bg3)); -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .subtitle { text-align: center; color: var(--muted); margin-top: 8px; font-size: 16px; line-height: 1.5; }
+
+  .rules { margin: 20px 0 20px; background: #f5f3ff; border: 1px solid #ede9fe; border-radius: 16px; padding: 14px 16px; }
+  .rules li { list-style: none; display: flex; gap: 12px; align-items: center; padding: 7px 0; font-size: 16px; color: #4c1d95; font-weight: 600; }
+  .rules li .ic { font-size: 22px; }
+
+  .levelmap { display: flex; justify-content: space-between; gap: 6px; margin: 16px 0 4px; }
+  .lvpip { flex: 1; text-align: center; font-size: 11px; font-weight: 700; color: var(--muted); padding: 8px 2px; border-radius: 12px; background: #f3f4f6; border: 2px solid transparent; transition: 0.25s; }
+  .lvpip .n { display: block; font-size: 16px; margin-bottom: 2px; }
+  .lvpip.done { background: var(--good-bg); color: var(--good); }
+  .lvpip.current { border-color: var(--accent); color: var(--accent); background: #f5f3ff; }
+
+  .btn {
+    display: block; width: 100%; border: none; border-radius: 18px; padding: 17px; font-size: 19px; font-weight: 800; color: #fff; cursor: pointer;
+    background: linear-gradient(120deg, var(--accent), var(--bg2)); box-shadow: 0 10px 24px -8px var(--ring);
+    transition: transform 0.12s ease, box-shadow 0.2s ease, opacity 0.2s; font-family: inherit;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -8px var(--ring); }
+  .btn:active { transform: translateY(0) scale(0.99); }
+  .btn.secondary { background: #f3f4f6; color: var(--accent); box-shadow: none; margin-top: 10px; }
+  .btn.secondary:hover { background: #ede9fe; }
+  .btn.big { font-size: 20px; padding: 18px; }
+  .btn.pulse { animation: pulseBtn 1.1s ease-in-out infinite; }
+  @keyframes pulseBtn { 0%,100% { transform: scale(1);} 50% { transform: scale(1.035);} }
+
+  /* ---------- Play screen ---------- */
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .pill { font-size: 13px; font-weight: 800; padding: 7px 13px; border-radius: 999px; background: #f5f3ff; color: var(--accent); }
+  .topright { display: flex; align-items: center; gap: 8px; }
+  .lives { font-size: 18px; letter-spacing: 1px; }
+  .iconbtn { border: none; background: #f3f4f6; width: 38px; height: 38px; border-radius: 12px; font-size: 18px; cursor: pointer; line-height: 1; }
+  .iconbtn:active { transform: scale(0.92); }
+
+  .progress { height: 10px; background: #eee; border-radius: 999px; margin: 14px 0 4px; overflow: hidden; }
+  .progress > i { display: block; height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--bg2)); transition: width 0.4s ease; }
+  .qcount { text-align: center; font-size: 13px; color: var(--muted); font-weight: 700; margin-top: 8px; }
+
+  .flagwrap { text-align: center; margin: 14px 0 4px; }
+  .flag {
+    font-size: clamp(92px, 32vw, 140px); line-height: 1; filter: drop-shadow(0 10px 18px rgba(0,0,0,0.18));
+    animation: flagin 0.45s cubic-bezier(0.22,1,0.36,1);
+    font-family: "Twemoji Country Flags", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  }
+  @keyframes flagin { from { opacity: 0; transform: scale(0.6) rotate(-6deg);} to { opacity: 1; transform: none;} }
+  .qtext { text-align: center; font-weight: 800; font-size: 20px; margin: 6px 0 4px; color: var(--ink); }
+  .qhint { text-align: center; font-size: 14px; color: var(--muted); margin-bottom: 14px; font-weight: 600; }
+
+  .options { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+  @media (max-width: 360px) { .options { grid-template-columns: 1fr; } }
+
+  .opt {
+    position: relative; border: 3px solid #e5e7eb; background: #fff; border-radius: 16px; padding: 16px 12px; font-size: 16px; font-weight: 800;
+    color: var(--ink); cursor: pointer; transition: 0.15s; font-family: inherit; min-height: 60px;
+    display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.2;
+  }
+  .opt:hover:not(:disabled) { border-color: var(--accent); background: #faf5ff; transform: translateY(-2px); }
+  .opt:disabled { cursor: default; }
+  .opt .badge { position: absolute; top: -12px; right: -8px; font-size: 24px; opacity: 0; transform: scale(0.4); transition: 0.25s; }
+  .opt.correct { border-color: var(--good); background: var(--good-bg); color: var(--good); animation: bump 0.4s; }
+  .opt.correct .badge { opacity: 1; transform: scale(1); }
+  .opt.wrong { border-color: var(--bad); background: var(--bad-bg); color: var(--bad); animation: shake 0.4s; }
+  .opt.wrong .badge { opacity: 1; transform: scale(1); }
+  .opt.dim { opacity: 0.4; }
+  .opt.reveal { animation: glowGood 1s ease-in-out infinite; }
+  @keyframes bump { 0%,100% { transform: scale(1);} 40% { transform: scale(1.06);} }
+  @keyframes shake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-6px);} 40%{transform:translateX(6px);} 60%{transform:translateX(-4px);} 80%{transform:translateX(4px);} }
+  @keyframes glowGood { 0%,100% { box-shadow: 0 0 0 0 rgba(22,163,74,0.0);} 50% { box-shadow: 0 0 0 5px rgba(22,163,74,0.25);} }
+
+  /* Big clear feedback banner */
+  .banner { margin-top: 16px; border-radius: 18px; padding: 16px; text-align: center; animation: pop 0.35s cubic-bezier(0.22,1,0.36,1); }
+  .banner.good { background: var(--good-bg); border: 2px solid #86efac; }
+  .banner.bad { background: var(--bad-bg); border: 2px solid #fda4af; }
+  .banner .face { font-size: 40px; line-height: 1; }
+  .banner .msg { font-size: 20px; font-weight: 800; margin-top: 4px; }
+  .banner.good .msg { color: var(--good); }
+  .banner.bad .msg { color: var(--bad); }
+  .banner .detail { font-size: 15px; font-weight: 700; color: var(--ink); margin-top: 6px; }
+  .banner .detail .bigflag { font-size: 22px; vertical-align: middle; }
+  .banner .nextbtn { margin-top: 14px; }
+
+  /* ---------- Results ---------- */
+  .result-emoji { font-size: 64px; text-align: center; }
+  .score-big { text-align: center; font-size: 48px; font-weight: 800; margin: 6px 0; color: var(--accent); }
+  .score-sub { text-align: center; color: var(--muted); font-size: 16px; margin-bottom: 6px; line-height: 1.5; font-weight: 600; }
+  .stars { text-align: center; font-size: 38px; letter-spacing: 6px; margin: 12px 0 16px; }
+  .fade { animation: pop 0.4s cubic-bezier(0.22,1,0.36,1); }
+
+  footer { text-align: center; color: rgba(255,255,255,0.8); font-size: 12px; margin-top: 16px; z-index: 1; position: relative; }
+
+  /* Confetti */
+  #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; overflow: hidden; }
+  .confetti-piece { position: absolute; width: 10px; height: 14px; top: -20px; border-radius: 2px; animation: fall linear forwards; }
+  @keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: 0.9; } }
+
+  @media (prefers-reduced-motion: reduce) { * { animation-duration: 0.01ms !important; } }
+</style>
+
+<div class="blob a"></div>
+<div class="blob b"></div>
+<div class="blob c"></div>
+<div id="confetti"></div>
+
+<div class="app">
+  <div class="card" id="card"></div>
+  <footer>🌍 Guess the Country · a fun flag game · 5 levels</footer>
+</div>
+
+<script>
+/* ============================================================
+   COUNTRY DATA: tier 1 = famous ... tier 5 = tricky
+   ============================================================ */
+const COUNTRIES = [
+  {n:"United States", f:"🇺🇸", t:1, c:"NA"},
+  {n:"France", f:"🇫🇷", t:1, c:"EU"},
+  {n:"Japan", f:"🇯🇵", t:1, c:"AS"},
+  {n:"Brazil", f:"🇧🇷", t:1, c:"SA"},
+  {n:"Germany", f:"🇩🇪", t:1, c:"EU"},
+  {n:"Italy", f:"🇮🇹", t:1, c:"EU"},
+  {n:"Canada", f:"🇨🇦", t:1, c:"NA"},
+  {n:"China", f:"🇨🇳", t:1, c:"AS"},
+  {n:"India", f:"🇮🇳", t:1, c:"AS"},
+  {n:"United Kingdom", f:"🇬🇧", t:1, c:"EU"},
+  {n:"Australia", f:"🇦🇺", t:1, c:"OC"},
+  {n:"Spain", f:"🇪🇸", t:1, c:"EU"},
+  {n:"Mexico", f:"🇲🇽", t:1, c:"NA"},
+  {n:"Russia", f:"🇷🇺", t:1, c:"EU"},
+  {n:"Egypt", f:"🇪🇬", t:1, c:"AF"},
+  {n:"South Africa", f:"🇿🇦", t:1, c:"AF"},
+  {n:"Argentina", f:"🇦🇷", t:1, c:"SA"},
+  {n:"South Korea", f:"🇰🇷", t:1, c:"AS"},
+  {n:"Greece", f:"🇬🇷", t:1, c:"EU"},
+  {n:"Turkey", f:"🇹🇷", t:1, c:"AS"},
+
+  {n:"Netherlands", f:"🇳🇱", t:2, c:"EU"},
+  {n:"Sweden", f:"🇸🇪", t:2, c:"EU"},
+  {n:"Norway", f:"🇳🇴", t:2, c:"EU"},
+  {n:"Portugal", f:"🇵🇹", t:2, c:"EU"},
+  {n:"Switzerland", f:"🇨🇭", t:2, c:"EU"},
+  {n:"Ireland", f:"🇮🇪", t:2, c:"EU"},
+  {n:"Poland", f:"🇵🇱", t:2, c:"EU"},
+  {n:"Thailand", f:"🇹🇭", t:2, c:"AS"},
+  {n:"Vietnam", f:"🇻🇳", t:2, c:"AS"},
+  {n:"Indonesia", f:"🇮🇩", t:2, c:"AS"},
+  {n:"Saudi Arabia", f:"🇸🇦", t:2, c:"AS"},
+  {n:"Nigeria", f:"🇳🇬", t:2, c:"AF"},
+  {n:"Kenya", f:"🇰🇪", t:2, c:"AF"},
+  {n:"Chile", f:"🇨🇱", t:2, c:"SA"},
+  {n:"Peru", f:"🇵🇪", t:2, c:"SA"},
+  {n:"Colombia", f:"🇨🇴", t:2, c:"SA"},
+  {n:"New Zealand", f:"🇳🇿", t:2, c:"OC"},
+  {n:"Cuba", f:"🇨🇺", t:2, c:"NA"},
+  {n:"Belgium", f:"🇧🇪", t:2, c:"EU"},
+  {n:"Austria", f:"🇦🇹", t:2, c:"EU"},
+
+  {n:"Morocco", f:"🇲🇦", t:3, c:"AF"},
+  {n:"Israel", f:"🇮🇱", t:3, c:"AS"},
+  {n:"United Arab Emirates", f:"🇦🇪", t:3, c:"AS"},
+  {n:"Ukraine", f:"🇺🇦", t:3, c:"EU"},
+  {n:"Denmark", f:"🇩🇰", t:3, c:"EU"},
+  {n:"Finland", f:"🇫🇮", t:3, c:"EU"},
+  {n:"Czechia", f:"🇨🇿", t:3, c:"EU"},
+  {n:"Hungary", f:"🇭🇺", t:3, c:"EU"},
+  {n:"Romania", f:"🇷🇴", t:3, c:"EU"},
+  {n:"Philippines", f:"🇵🇭", t:3, c:"AS"},
+  {n:"Malaysia", f:"🇲🇾", t:3, c:"AS"},
+  {n:"Pakistan", f:"🇵🇰", t:3, c:"AS"},
+  {n:"Bangladesh", f:"🇧🇩", t:3, c:"AS"},
+  {n:"Iran", f:"🇮🇷", t:3, c:"AS"},
+  {n:"Iraq", f:"🇮🇶", t:3, c:"AS"},
+  {n:"Venezuela", f:"🇻🇪", t:3, c:"SA"},
+  {n:"Ecuador", f:"🇪🇨", t:3, c:"SA"},
+  {n:"Ethiopia", f:"🇪🇹", t:3, c:"AF"},
+  {n:"Ghana", f:"🇬🇭", t:3, c:"AF"},
+  {n:"Iceland", f:"🇮🇸", t:3, c:"EU"},
+
+  {n:"Croatia", f:"🇭🇷", t:4, c:"EU"},
+  {n:"Serbia", f:"🇷🇸", t:4, c:"EU"},
+  {n:"Slovakia", f:"🇸🇰", t:4, c:"EU"},
+  {n:"Slovenia", f:"🇸🇮", t:4, c:"EU"},
+  {n:"Bulgaria", f:"🇧🇬", t:4, c:"EU"},
+  {n:"Latvia", f:"🇱🇻", t:4, c:"EU"},
+  {n:"Lithuania", f:"🇱🇹", t:4, c:"EU"},
+  {n:"Estonia", f:"🇪🇪", t:4, c:"EU"},
+  {n:"Tunisia", f:"🇹🇳", t:4, c:"AF"},
+  {n:"Algeria", f:"🇩🇿", t:4, c:"AF"},
+  {n:"Jordan", f:"🇯🇴", t:4, c:"AS"},
+  {n:"Lebanon", f:"🇱🇧", t:4, c:"AS"},
+  {n:"Qatar", f:"🇶🇦", t:4, c:"AS"},
+  {n:"Sri Lanka", f:"🇱🇰", t:4, c:"AS"},
+  {n:"Nepal", f:"🇳🇵", t:4, c:"AS"},
+  {n:"Myanmar", f:"🇲🇲", t:4, c:"AS"},
+  {n:"Cambodia", f:"🇰🇭", t:4, c:"AS"},
+  {n:"Uruguay", f:"🇺🇾", t:4, c:"SA"},
+  {n:"Bolivia", f:"🇧🇴", t:4, c:"SA"},
+  {n:"Costa Rica", f:"🇨🇷", t:4, c:"NA"},
+  {n:"Senegal", f:"🇸🇳", t:4, c:"AF"},
+  {n:"Tanzania", f:"🇹🇿", t:4, c:"AF"},
+  {n:"Zimbabwe", f:"🇿🇼", t:4, c:"AF"},
+  {n:"Oman", f:"🇴🇲", t:4, c:"AS"},
+
+  {n:"Eswatini", f:"🇸🇿", t:5, c:"AF"},
+  {n:"Lesotho", f:"🇱🇸", t:5, c:"AF"},
+  {n:"Kiribati", f:"🇰🇮", t:5, c:"OC"},
+  {n:"Tuvalu", f:"🇹🇻", t:5, c:"OC"},
+  {n:"Vanuatu", f:"🇻🇺", t:5, c:"OC"},
+  {n:"Palau", f:"🇵🇼", t:5, c:"OC"},
+  {n:"Comoros", f:"🇰🇲", t:5, c:"AF"},
+  {n:"Djibouti", f:"🇩🇯", t:5, c:"AF"},
+  {n:"Eritrea", f:"🇪🇷", t:5, c:"AF"},
+  {n:"Bhutan", f:"🇧🇹", t:5, c:"AS"},
+  {n:"Brunei", f:"🇧🇳", t:5, c:"AS"},
+  {n:"Timor-Leste", f:"🇹🇱", t:5, c:"AS"},
+  {n:"Suriname", f:"🇸🇷", t:5, c:"SA"},
+  {n:"Guyana", f:"🇬🇾", t:5, c:"SA"},
+  {n:"Belize", f:"🇧🇿", t:5, c:"NA"},
+  {n:"Moldova", f:"🇲🇩", t:5, c:"EU"},
+  {n:"Montenegro", f:"🇲🇪", t:5, c:"EU"},
+  {n:"North Macedonia", f:"🇲🇰", t:5, c:"EU"},
+  {n:"Turkmenistan", f:"🇹🇲", t:5, c:"AS"},
+  {n:"Kyrgyzstan", f:"🇰🇬", t:5, c:"AS"},
+  {n:"Tajikistan", f:"🇹🇯", t:5, c:"AS"},
+  {n:"Gabon", f:"🇬🇦", t:5, c:"AF"},
+  {n:"Togo", f:"🇹🇬", t:5, c:"AF"},
+  {n:"Benin", f:"🇧🇯", t:5, c:"AF"},
+  {n:"Malawi", f:"🇲🇼", t:5, c:"AF"},
+  {n:"Mauritania", f:"🇲🇷", t:5, c:"AF"},
+  {n:"Andorra", f:"🇦🇩", t:5, c:"EU"},
+  {n:"San Marino", f:"🇸🇲", t:5, c:"EU"},
+  {n:"Liechtenstein", f:"🇱🇮", t:5, c:"EU"},
+  {n:"Kazakhstan", f:"🇰🇿", t:5, c:"AS"},
+  {n:"Azerbaijan", f:"🇦🇿", t:5, c:"AS"},
+  {n:"Armenia", f:"🇦🇲", t:5, c:"AS"},
+  {n:"Georgia", f:"🇬🇪", t:5, c:"AS"},
+  {n:"Laos", f:"🇱🇦", t:5, c:"AS"},
+  {n:"Mongolia", f:"🇲🇳", t:5, c:"AS"},
+];
+
+/* ============================================================ CONFIG */
+const QUESTIONS_PER_LEVEL = 10;
+const MAX_LEVEL = 5;
+const PASS_MARK = 7;
+const STARTING_LIVES = 3;
+const LEVEL_NAMES = { 1:"Rookie", 2:"Explorer", 3:"Navigator", 4:"Globetrotter", 5:"Cartographer" };
+
+const CHEERS = ["Correct! 🎉", "Yes! 🌟", "Awesome! 🚀", "You got it! 👏", "Great job! 💪", "Woohoo! 🎊"];
+const KINDLY = ["Good try! 😊", "Nice try! 🙂", "Almost! 👍", "Keep going! 🌈"];
+
+/* ============================================================ STATE */
+let level = 1, qIndex = 0, correctCount = 0, lives = STARTING_LIVES;
+let deck = [], locked = false;
+let unlockedLevel = loadProgress();
+let soundOn = loadSound();
+const card = document.getElementById("card");
+
+/* ---------- helpers ---------- */
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function loadProgress(){ try { return Math.min(Math.max(parseInt(localStorage.getItem("cg_unlocked")||"1",10),1),MAX_LEVEL);} catch(e){ return 1; } }
+function saveProgress(lv){ try { localStorage.setItem("cg_unlocked",String(lv)); } catch(e){} }
+function loadSound(){ try { return localStorage.getItem("cg_sound")!=="off"; } catch(e){ return true; } }
+function saveSound(v){ try { localStorage.setItem("cg_sound", v?"on":"off"); } catch(e){} }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+/* ---------- sound (Web Audio, no files) ---------- */
+let audioCtx = null;
+function tone(freqs, dur, type){
+  if(!soundOn) return;
+  try{
+    audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==="suspended") audioCtx.resume();
+    freqs.forEach((f,i)=>{
+      const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+      o.type=type||"sine"; o.frequency.value=f;
+      const start=audioCtx.currentTime + i*0.12;
+      g.gain.setValueAtTime(0.0001,start);
+      g.gain.exponentialRampToValueAtTime(0.25,start+0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001,start+dur);
+      o.connect(g).connect(audioCtx.destination);
+      o.start(start); o.stop(start+dur+0.02);
+    });
+  }catch(e){}
+}
+const sndCorrect = ()=> tone([523,659,784], 0.22, "triangle"); // happy up-chime
+const sndWrong   = ()=> tone([300,220], 0.25, "sine");         // gentle low
+const sndWin     = ()=> tone([523,659,784,1047], 0.3, "triangle");
+const sndTap     = ()=> tone([440], 0.05, "square");
+
+/* ---------- confetti ---------- */
+function confetti(n){
+  const box=document.getElementById("confetti");
+  const colors=["#f472b6","#38bdf8","#a78bfa","#fbbf24","#34d399","#fb7185"];
+  for(let i=0;i<n;i++){
+    const p=document.createElement("div");
+    p.className="confetti-piece";
+    p.style.left=Math.random()*100+"vw";
+    p.style.background=colors[i%colors.length];
+    p.style.animationDuration=(1.6+Math.random()*1.4)+"s";
+    p.style.animationDelay=(Math.random()*0.3)+"s";
+    p.style.transform="rotate("+Math.random()*360+"deg)";
+    box.appendChild(p);
+    setTimeout(()=>p.remove(), 3200);
+  }
+}
+
+/* ---------- deck ---------- */
+function buildDeck(lv){
+  const pool = COUNTRIES.filter(c=>c.t===lv);
+  const picks = shuffle(pool).slice(0, QUESTIONS_PER_LEVEL);
+  return picks.map(answer=>{
+    const sameContinent = pool.filter(c=>c.n!==answer.n && c.c===answer.c);
+    const sameTier = pool.filter(c=>c.n!==answer.n);
+    const anywhere = COUNTRIES.filter(c=>c.n!==answer.n);
+    const distractors=[];
+    for(const bucket of [shuffle(sameContinent),shuffle(sameTier),shuffle(anywhere)]){
+      for(const c of bucket){ if(distractors.length>=3) break; if(c.n!==answer.n && !distractors.some(d=>d.n===c.n)) distractors.push(c); }
+      if(distractors.length>=3) break;
+    }
+    return { answer, options: shuffle([answer,...distractors]) };
+  });
+}
+
+/* ============================================================ SCREENS */
+function soundBtnHtml(){ return `<button class="iconbtn" id="soundBtn" title="Sound on/off" aria-label="Sound">${soundOn?"🔊":"🔇"}</button>`; }
+function wireSoundBtn(){ const b=document.getElementById("soundBtn"); if(b) b.onclick=()=>{ soundOn=!soundOn; saveSound(soundOn); b.textContent=soundOn?"🔊":"🔇"; if(soundOn) sndTap(); }; }
+
+function renderStart(){
+  const pips=[];
+  for(let i=1;i<=MAX_LEVEL;i++){
+    const cls = i<unlockedLevel?"done":i===unlockedLevel?"current":"";
+    const mark = i<unlockedLevel?"✓":i;
+    pips.push(`<div class="lvpip ${cls}"><span class="n">${mark}</span>${LEVEL_NAMES[i]}</div>`);
+  }
+  card.className="card fade";
+  card.innerHTML=`
+    <div class="topbar"><span></span><div class="topright">${soundBtnHtml()}</div></div>
+    <div class="hero-emoji">🌍</div>
+    <h1>Guess the Country</h1>
+    <p class="subtitle">Look at the flag, then <b>tap the right country!</b></p>
+    <ul class="rules">
+      <li><span class="ic">👀</span><span>See a <b>flag</b>? Tap the country you think it is.</span></li>
+      <li><span class="ic">✅</span><span>Green means <b>correct</b>. Great job!</span></li>
+      <li><span class="ic">💡</span><span>Wrong? We'll <b>show you</b> the right one.</span></li>
+      <li><span class="ic">❤️</span><span>You have <b>3 hearts</b> each level.</span></li>
+      <li><span class="ic">🏆</span><span>Get <b>7 or more</b> to reach the next level!</span></li>
+    </ul>
+    <div class="levelmap">${pips.join("")}</div>
+    <button class="btn big pulse" id="playBtn">${unlockedLevel>1?`▶ Play Level ${unlockedLevel}`:"▶ Let's Play!"}</button>
+    <button class="btn secondary" id="restartBtn">🔄 Start from the Beginning</button>
+  `;
+  wireSoundBtn();
+  document.getElementById("playBtn").onclick=()=>{ sndTap(); startLevel(unlockedLevel); };
+  const rb=document.getElementById("restartBtn");
+  if(rb) rb.onclick=()=>{ sndTap(); unlockedLevel=1; saveProgress(1); startLevel(1); };
+}
+
+function startLevel(lv){ level=lv; qIndex=0; correctCount=0; lives=STARTING_LIVES; deck=buildDeck(lv); renderQuestion(); }
+
+function renderQuestion(){
+  locked=false;
+  const q=deck[qIndex];
+  const hearts="❤️".repeat(lives)+"🖤".repeat(STARTING_LIVES-lives);
+  const pct=(qIndex/QUESTIONS_PER_LEVEL)*100;
+  card.className="card";
+  card.innerHTML=`
+    <div class="topbar">
+      <span class="pill">Level ${level} · ${LEVEL_NAMES[level]}</span>
+      <div class="topright"><span class="lives" title="Hearts left">${hearts}</span>${soundBtnHtml()}<button class="iconbtn" id="homeBtn" title="Home" aria-label="Home">🏠</button></div>
+    </div>
+    <div class="progress"><i style="width:${pct}%"></i></div>
+    <div class="qcount">Flag ${qIndex+1} of ${QUESTIONS_PER_LEVEL} · Stars ${correctCount} ⭐</div>
+    <div class="flagwrap"><div class="flag">${q.answer.f}</div></div>
+    <div class="qtext">Whose flag is this?</div>
+    <div class="qhint">👇 Tap the country you think it is</div>
+    <div class="options" id="opts"></div>
+    <div id="bannerSlot"></div>
+  `;
+  wireSoundBtn();
+  const hb=document.getElementById("homeBtn");
+  if(hb) hb.onclick=()=>{ sndTap(); renderStart(); };
+  const optsEl=document.getElementById("opts");
+  q.options.forEach(opt=>{
+    const b=document.createElement("button");
+    b.className="opt";
+    b.innerHTML=`<span>${opt.n}</span><span class="badge"></span>`;
+    b.onclick=()=>choose(b,opt,q);
+    optsEl.appendChild(b);
+  });
+}
+
+function choose(btn, opt, q){
+  if(locked) return;
+  locked=true;
+  const isRight = opt.n===q.answer.n;
+  const buttons=[...document.querySelectorAll(".opt")];
+
+  buttons.forEach(b=>{
+    b.disabled=true;
+    const name=b.querySelector("span").textContent;
+    const badge=b.querySelector(".badge");
+    if(name===q.answer.n){ b.classList.add("correct"); badge.textContent="✅"; if(!isRight) b.classList.add("reveal"); }
+    else if(b===btn){ b.classList.add("wrong"); badge.textContent="❌"; }
+    else b.classList.add("dim");
+  });
+
+  const slot=document.getElementById("bannerSlot");
+  const last = qIndex>=QUESTIONS_PER_LEVEL-1;
+  const nextLabel = last ? "See my score ⭐" : "Next flag ▶";
+
+  if(isRight){
+    correctCount++;
+    sndCorrect(); confetti(26);
+    slot.innerHTML=`
+      <div class="banner good">
+        <div class="face">🎉</div>
+        <div class="msg">${pick(CHEERS)}</div>
+        <div class="detail">That's <span class="bigflag">${q.answer.f}</span> <b>${q.answer.n}</b></div>
+        <button class="btn big pulse nextbtn" id="nextBtn">${nextLabel}</button>
+      </div>`;
+  } else {
+    lives--;
+    sndWrong();
+    slot.innerHTML=`
+      <div class="banner bad">
+        <div class="face">💡</div>
+        <div class="msg">${pick(KINDLY)}</div>
+        <div class="detail">The right answer is <span class="bigflag">${q.answer.f}</span> <b>${q.answer.n}</b></div>
+        <button class="btn big pulse nextbtn" id="nextBtn">${lives<=0 ? "See my score ⭐" : nextLabel}</button>
+      </div>`;
+  }
+
+  // scroll the banner into view so kids always see the Next button on small screens
+  const banner=slot.querySelector(".banner");
+  if(banner) banner.scrollIntoView({behavior:"smooth", block:"nearest"});
+
+  document.getElementById("nextBtn").onclick=()=>{
+    sndTap();
+    if(lives<=0){ renderResults(false); return; }
+    qIndex++;
+    if(qIndex>=QUESTIONS_PER_LEVEL) renderResults(correctCount>=PASS_MARK);
+    else renderQuestion();
+  };
+}
+
+function renderResults(passed){
+  const outOfLives = lives<=0;
+  const stars = correctCount>=10?3:correctCount>=8?2:correctCount>=PASS_MARK?1:0;
+  const starRow="⭐".repeat(stars)+"☆".repeat(3-stars);
+  let emoji,title,sub;
+  const wonGame = passed && level>=MAX_LEVEL;
+
+  if(wonGame){ emoji="🏆"; title="You did it!"; sub="You finished all 5 levels. You're a flag champion!"; }
+  else if(passed){ emoji=pick(["🎉","🌟","🚀","🔥","🎊"]); title=`Level ${level} done!`; sub=`Amazing! Level ${level+1} (${LEVEL_NAMES[level+1]}) is open now.`; }
+  else if(outOfLives){ emoji="💪"; title="Out of hearts!"; sub=`You got ${correctCount} right. Take a breath and try again. You've got this!`; }
+  else { emoji="🙂"; title="So close!"; sub=`You got ${correctCount}. You need 7 to move up. Give it another go!`; }
+
+  if(passed){ unlockedLevel=Math.max(unlockedLevel, Math.min(level+1,MAX_LEVEL)); saveProgress(unlockedLevel); }
+  if(passed){ sndWin(); confetti(80); } else { sndWrong(); }
+
+  card.className="card fade";
+  card.innerHTML=`
+    <div class="topbar"><span></span><div class="topright">${soundBtnHtml()}</div></div>
+    <div class="result-emoji">${emoji}</div>
+    <div class="score-big">${correctCount}<span style="font-size:24px;color:var(--muted)">/${QUESTIONS_PER_LEVEL}</span></div>
+    <div class="stars">${starRow}</div>
+    <h1 style="font-size:28px">${title}</h1>
+    <div class="score-sub">${sub}</div>
+    <div id="resBtns" style="margin-top:20px"></div>
+  `;
+  wireSoundBtn();
+  const box=document.getElementById("resBtns");
+  const addBtn=(label,cls,fn)=>{ const b=document.createElement("button"); b.className="btn big"+(cls?" "+cls:""); b.textContent=label; b.onclick=()=>{ sndTap(); fn(); }; box.appendChild(b); };
+
+  if(wonGame){ addBtn("Play again 🔁","pulse",()=>{ unlockedLevel=1; saveProgress(1); startLevel(1); }); addBtn("🏠 Home","secondary",renderStart); }
+  else if(passed){ addBtn(`▶ Go to Level ${level+1}`,"pulse",()=>startLevel(level+1)); addBtn("🏠 Home","secondary",renderStart); }
+  else { addBtn(`🔁 Try Level ${level} again`,"pulse",()=>startLevel(level)); addBtn("🏠 Home","secondary",renderStart); }
+}
+
+/* ---------- boot ---------- */
+renderStart();
+</script>
