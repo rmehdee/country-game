@@ -1,10 +1,12 @@
 # 🌍 Guess the Country
 
-A responsive, mobile-friendly flag-guessing game. Name the country from its flag across **5 levels** of **10 questions each** — flags start famous (Level 1) and get progressively more obscure (Level 5).
+A responsive, mobile-friendly flag-guessing game for kids. Name the country from its flag across **20 levels** covering **all 195 countries** in the world. Flags start famous (Level 1) and get progressively more obscure. Beat all 20 levels to become a **World Flag Master**.
 
-- Pure static site — one `index.html`, no build step, no dependencies.
-- Multiple choice · 3 lives per level · score 7/10 to advance.
+- Pure static site: one `index.html`, no build step, no dependencies.
+- Multiple choice, 3 hearts per level, score 70% to advance.
+- Big kid-friendly feedback, sound effects, confetti, and read-you-the-answer banners.
 - Progress is saved in the browser (`localStorage`).
+- 195 countries = 193 UN members + Vatican City + Palestine, grouped into 5 difficulty bands (Beginner, Explorer, Adventurer, Expert, Legend).
 
 ## Run locally
 
