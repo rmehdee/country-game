@@ -1,43 +1,27 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Guess the Country 🌍</title>
-<meta name="description" content="A fun flag-guessing game for kids. 5 levels, 10 flags each. Tap the right country!" />
+<meta name="description" content="A fun flag-guessing game for kids. Learn all 195 country flags across 20 levels!" />
 <meta name="theme-color" content="#5b21b6" />
 
 <style>
   :root {
-    --bg1: #6d28d9;
-    --bg2: #2563eb;
-    --bg3: #db2777;
-    --card: #ffffff;
-    --ink: #1e1b2e;
-    --muted: #6b7280;
-    --good: #16a34a;
-    --good-bg: #dcfce7;
-    --bad: #e11d48;
-    --bad-bg: #ffe4e6;
-    --accent: #7c3aed;
-    --ring: rgba(124, 58, 237, 0.35);
-    --shadow: 0 20px 50px -12px rgba(31, 12, 60, 0.45);
+    --bg1: #6d28d9; --bg2: #2563eb; --bg3: #db2777;
+    --card: #ffffff; --ink: #1e1b2e; --muted: #6b7280;
+    --good: #16a34a; --good-bg: #dcfce7; --bad: #e11d48; --bad-bg: #ffe4e6;
+    --accent: #7c3aed; --ring: rgba(124,58,237,0.35);
+    --shadow: 0 20px 50px -12px rgba(31,12,60,0.45);
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
-
   body {
-    font-family: "Baloo 2", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    color: var(--ink);
-    min-height: 100dvh;
-    background: linear-gradient(135deg, var(--bg1), var(--bg2) 55%, var(--bg3));
-    background-attachment: fixed;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink); min-height: 100dvh;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2) 55%, var(--bg3)); background-attachment: fixed;
+    display: flex; align-items: center; justify-content: center;
     padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
-    overflow-x: hidden;
-    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden; -webkit-tap-highlight-color: transparent;
   }
-
   .blob { position: fixed; border-radius: 50%; filter: blur(50px); opacity: 0.35; z-index: 0; pointer-events: none; animation: float 14s ease-in-out infinite; }
   .blob.a { width: 320px; height: 320px; background: #f472b6; top: -80px; left: -60px; }
   .blob.b { width: 280px; height: 280px; background: #38bdf8; bottom: -90px; right: -70px; animation-delay: -5s; }
@@ -45,36 +29,37 @@
   @keyframes float { 0%,100% { transform: translate(0,0) scale(1);} 50% { transform: translate(25px,-30px) scale(1.08);} }
 
   .app { position: relative; z-index: 1; width: 100%; max-width: 500px; }
-
   .card { background: var(--card); border-radius: 26px; box-shadow: var(--shadow); padding: 24px 20px 26px; animation: pop 0.5s cubic-bezier(0.22,1,0.36,1); }
   @keyframes pop { from { opacity: 0; transform: translateY(16px) scale(0.97);} to { opacity: 1; transform: none;} }
   .hide { display: none !important; }
 
-  /* ---------- Start screen ---------- */
   .hero-emoji { font-size: 66px; line-height: 1; text-align: center; animation: spin 6s ease-in-out infinite; }
   @keyframes spin { 0%,100% { transform: rotate(-8deg);} 50% { transform: rotate(8deg);} }
-
   h1 {
     text-align: center; font-size: clamp(28px, 8vw, 40px); font-weight: 800; letter-spacing: -0.02em; margin-top: 10px;
     background: linear-gradient(120deg, var(--bg1), var(--bg3)); -webkit-background-clip: text; background-clip: text; color: transparent;
   }
   .subtitle { text-align: center; color: var(--muted); margin-top: 8px; font-size: 16px; line-height: 1.5; }
 
-  .rules { margin: 20px 0 20px; background: #f5f3ff; border: 1px solid #ede9fe; border-radius: 16px; padding: 14px 16px; }
-  .rules li { list-style: none; display: flex; gap: 12px; align-items: center; padding: 7px 0; font-size: 16px; color: #4c1d95; font-weight: 600; }
+  .rules { margin: 18px 0; background: #f5f3ff; border: 1px solid #ede9fe; border-radius: 16px; padding: 14px 16px; }
+  .rules li { list-style: none; display: flex; gap: 12px; align-items: center; padding: 7px 0; font-size: 15.5px; color: #4c1d95; font-weight: 600; }
   .rules li .ic { font-size: 22px; }
 
-  .levelmap { display: flex; justify-content: space-between; gap: 6px; margin: 16px 0 4px; }
-  .lvpip { flex: 1; text-align: center; font-size: 11px; font-weight: 700; color: var(--muted); padding: 8px 2px; border-radius: 12px; background: #f3f4f6; border: 2px solid transparent; transition: 0.25s; }
-  .lvpip .n { display: block; font-size: 16px; margin-bottom: 2px; }
-  .lvpip.done { background: var(--good-bg); color: var(--good); }
-  .lvpip.current { border-color: var(--accent); color: var(--accent); background: #f5f3ff; }
+  /* progress across all 20 levels */
+  .campaign { margin: 16px 0 6px; }
+  .campaign .label { display: flex; justify-content: space-between; font-size: 13px; font-weight: 800; color: var(--muted); margin-bottom: 6px; }
+  .campaign .label b { color: var(--accent); }
+  .cbar { height: 12px; background: #eee; border-radius: 999px; overflow: hidden; }
+  .cbar > i { display: block; height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--bg2)); transition: width 0.5s ease; }
+  .bands { display: flex; gap: 6px; margin-top: 10px; }
+  .band { flex: 1; text-align: center; font-size: 10.5px; font-weight: 800; color: var(--muted); padding: 8px 2px; border-radius: 12px; background: #f3f4f6; border: 2px solid transparent; transition: 0.25s; }
+  .band .be { display: block; font-size: 17px; margin-bottom: 2px; }
+  .band.done { background: var(--good-bg); color: var(--good); }
+  .band.current { border-color: var(--accent); color: var(--accent); background: #f5f3ff; }
 
-  .btn {
-    display: block; width: 100%; border: none; border-radius: 18px; padding: 17px; font-size: 19px; font-weight: 800; color: #fff; cursor: pointer;
+  .btn { display: block; width: 100%; border: none; border-radius: 18px; padding: 17px; font-size: 19px; font-weight: 800; color: #fff; cursor: pointer;
     background: linear-gradient(120deg, var(--accent), var(--bg2)); box-shadow: 0 10px 24px -8px var(--ring);
-    transition: transform 0.12s ease, box-shadow 0.2s ease, opacity 0.2s; font-family: inherit;
-  }
+    transition: transform 0.12s ease, box-shadow 0.2s ease, opacity 0.2s; font-family: inherit; }
   .btn:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -8px var(--ring); }
   .btn:active { transform: translateY(0) scale(0.99); }
   .btn.secondary { background: #f3f4f6; color: var(--accent); box-shadow: none; margin-top: 10px; }
@@ -83,7 +68,6 @@
   .btn.pulse { animation: pulseBtn 1.1s ease-in-out infinite; }
   @keyframes pulseBtn { 0%,100% { transform: scale(1);} 50% { transform: scale(1.035);} }
 
-  /* ---------- Play screen ---------- */
   .topbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .pill { font-size: 13px; font-weight: 800; padding: 7px 13px; border-radius: 999px; background: #f5f3ff; color: var(--accent); }
   .topright { display: flex; align-items: center; gap: 8px; }
@@ -96,23 +80,18 @@
   .qcount { text-align: center; font-size: 13px; color: var(--muted); font-weight: 700; margin-top: 8px; }
 
   .flagwrap { text-align: center; margin: 14px 0 4px; }
-  .flag {
-    font-size: clamp(92px, 32vw, 140px); line-height: 1; filter: drop-shadow(0 10px 18px rgba(0,0,0,0.18));
+  .flag { font-size: clamp(92px, 32vw, 140px); line-height: 1; filter: drop-shadow(0 10px 18px rgba(0,0,0,0.18));
     animation: flagin 0.45s cubic-bezier(0.22,1,0.36,1);
-    font-family: "Twemoji Country Flags", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
-  }
+    font-family: "Twemoji Country Flags", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
   @keyframes flagin { from { opacity: 0; transform: scale(0.6) rotate(-6deg);} to { opacity: 1; transform: none;} }
   .qtext { text-align: center; font-weight: 800; font-size: 20px; margin: 6px 0 4px; color: var(--ink); }
   .qhint { text-align: center; font-size: 14px; color: var(--muted); margin-bottom: 14px; font-weight: 600; }
 
   .options { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
   @media (max-width: 360px) { .options { grid-template-columns: 1fr; } }
-
-  .opt {
-    position: relative; border: 3px solid #e5e7eb; background: #fff; border-radius: 16px; padding: 16px 12px; font-size: 16px; font-weight: 800;
+  .opt { position: relative; border: 3px solid #e5e7eb; background: #fff; border-radius: 16px; padding: 16px 12px; font-size: 15.5px; font-weight: 800;
     color: var(--ink); cursor: pointer; transition: 0.15s; font-family: inherit; min-height: 60px;
-    display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.2;
-  }
+    display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.2; }
   .opt:hover:not(:disabled) { border-color: var(--accent); background: #faf5ff; transform: translateY(-2px); }
   .opt:disabled { cursor: default; }
   .opt .badge { position: absolute; top: -12px; right: -8px; font-size: 24px; opacity: 0; transform: scale(0.4); transition: 0.25s; }
@@ -124,9 +103,8 @@
   .opt.reveal { animation: glowGood 1s ease-in-out infinite; }
   @keyframes bump { 0%,100% { transform: scale(1);} 40% { transform: scale(1.06);} }
   @keyframes shake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-6px);} 40%{transform:translateX(6px);} 60%{transform:translateX(-4px);} 80%{transform:translateX(4px);} }
-  @keyframes glowGood { 0%,100% { box-shadow: 0 0 0 0 rgba(22,163,74,0.0);} 50% { box-shadow: 0 0 0 5px rgba(22,163,74,0.25);} }
+  @keyframes glowGood { 0%,100% { box-shadow: 0 0 0 0 rgba(22,163,74,0);} 50% { box-shadow: 0 0 0 5px rgba(22,163,74,0.25);} }
 
-  /* Big clear feedback banner */
   .banner { margin-top: 16px; border-radius: 18px; padding: 16px; text-align: center; animation: pop 0.35s cubic-bezier(0.22,1,0.36,1); }
   .banner.good { background: var(--good-bg); border: 2px solid #86efac; }
   .banner.bad { background: var(--bad-bg); border: 2px solid #fda4af; }
@@ -138,7 +116,6 @@
   .banner .detail .bigflag { font-size: 22px; vertical-align: middle; }
   .banner .nextbtn { margin-top: 14px; }
 
-  /* ---------- Results ---------- */
   .result-emoji { font-size: 64px; text-align: center; }
   .score-big { text-align: center; font-size: 48px; font-weight: 800; margin: 6px 0; color: var(--accent); }
   .score-sub { text-align: center; color: var(--muted); font-size: 16px; margin-bottom: 6px; line-height: 1.5; font-weight: 600; }
@@ -146,12 +123,9 @@
   .fade { animation: pop 0.4s cubic-bezier(0.22,1,0.36,1); }
 
   footer { text-align: center; color: rgba(255,255,255,0.8); font-size: 12px; margin-top: 16px; z-index: 1; position: relative; }
-
-  /* Confetti */
   #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; overflow: hidden; }
   .confetti-piece { position: absolute; width: 10px; height: 14px; top: -20px; border-radius: 2px; animation: fall linear forwards; }
   @keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: 0.9; } }
-
   @media (prefers-reduced-motion: reduce) { * { animation-duration: 0.01ms !important; } }
 </style>
 
@@ -162,152 +136,254 @@
 
 <div class="app">
   <div class="card" id="card"></div>
-  <footer>🌍 Guess the Country · a fun flag game · 5 levels</footer>
+  <footer>🌍 Guess the Country · all 195 flags · 20 levels</footer>
 </div>
 
 <script>
 /* ============================================================
-   COUNTRY DATA: tier 1 = famous ... tier 5 = tricky
+   ALL 195 COUNTRIES (193 UN members + Vatican City + Palestine)
+   Listed famous -> obscure. c = continent (for smart wrong answers).
+   The list order IS the difficulty order; levels are made by
+   slicing it into groups of 10, so beating every level means you
+   have identified every flag in the world.
    ============================================================ */
 const COUNTRIES = [
-  {n:"United States", f:"🇺🇸", t:1, c:"NA"},
-  {n:"France", f:"🇫🇷", t:1, c:"EU"},
-  {n:"Japan", f:"🇯🇵", t:1, c:"AS"},
-  {n:"Brazil", f:"🇧🇷", t:1, c:"SA"},
-  {n:"Germany", f:"🇩🇪", t:1, c:"EU"},
-  {n:"Italy", f:"🇮🇹", t:1, c:"EU"},
-  {n:"Canada", f:"🇨🇦", t:1, c:"NA"},
-  {n:"China", f:"🇨🇳", t:1, c:"AS"},
-  {n:"India", f:"🇮🇳", t:1, c:"AS"},
-  {n:"United Kingdom", f:"🇬🇧", t:1, c:"EU"},
-  {n:"Australia", f:"🇦🇺", t:1, c:"OC"},
-  {n:"Spain", f:"🇪🇸", t:1, c:"EU"},
-  {n:"Mexico", f:"🇲🇽", t:1, c:"NA"},
-  {n:"Russia", f:"🇷🇺", t:1, c:"EU"},
-  {n:"Egypt", f:"🇪🇬", t:1, c:"AF"},
-  {n:"South Africa", f:"🇿🇦", t:1, c:"AF"},
-  {n:"Argentina", f:"🇦🇷", t:1, c:"SA"},
-  {n:"South Korea", f:"🇰🇷", t:1, c:"AS"},
-  {n:"Greece", f:"🇬🇷", t:1, c:"EU"},
-  {n:"Turkey", f:"🇹🇷", t:1, c:"AS"},
+  // ----- most famous -----
+  {n:"United States", f:"🇺🇸", c:"NA"},
+  {n:"United Kingdom", f:"🇬🇧", c:"EU"},
+  {n:"France", f:"🇫🇷", c:"EU"},
+  {n:"Germany", f:"🇩🇪", c:"EU"},
+  {n:"Italy", f:"🇮🇹", c:"EU"},
+  {n:"Spain", f:"🇪🇸", c:"EU"},
+  {n:"Japan", f:"🇯🇵", c:"AS"},
+  {n:"China", f:"🇨🇳", c:"AS"},
+  {n:"India", f:"🇮🇳", c:"AS"},
+  {n:"Brazil", f:"🇧🇷", c:"SA"},
+  {n:"Canada", f:"🇨🇦", c:"NA"},
+  {n:"Australia", f:"🇦🇺", c:"OC"},
+  {n:"Russia", f:"🇷🇺", c:"EU"},
+  {n:"Mexico", f:"🇲🇽", c:"NA"},
+  {n:"Argentina", f:"🇦🇷", c:"SA"},
+  {n:"South Korea", f:"🇰🇷", c:"AS"},
+  {n:"Egypt", f:"🇪🇬", c:"AF"},
+  {n:"South Africa", f:"🇿🇦", c:"AF"},
+  {n:"Greece", f:"🇬🇷", c:"EU"},
+  {n:"Turkey", f:"🇹🇷", c:"AS"},
 
-  {n:"Netherlands", f:"🇳🇱", t:2, c:"EU"},
-  {n:"Sweden", f:"🇸🇪", t:2, c:"EU"},
-  {n:"Norway", f:"🇳🇴", t:2, c:"EU"},
-  {n:"Portugal", f:"🇵🇹", t:2, c:"EU"},
-  {n:"Switzerland", f:"🇨🇭", t:2, c:"EU"},
-  {n:"Ireland", f:"🇮🇪", t:2, c:"EU"},
-  {n:"Poland", f:"🇵🇱", t:2, c:"EU"},
-  {n:"Thailand", f:"🇹🇭", t:2, c:"AS"},
-  {n:"Vietnam", f:"🇻🇳", t:2, c:"AS"},
-  {n:"Indonesia", f:"🇮🇩", t:2, c:"AS"},
-  {n:"Saudi Arabia", f:"🇸🇦", t:2, c:"AS"},
-  {n:"Nigeria", f:"🇳🇬", t:2, c:"AF"},
-  {n:"Kenya", f:"🇰🇪", t:2, c:"AF"},
-  {n:"Chile", f:"🇨🇱", t:2, c:"SA"},
-  {n:"Peru", f:"🇵🇪", t:2, c:"SA"},
-  {n:"Colombia", f:"🇨🇴", t:2, c:"SA"},
-  {n:"New Zealand", f:"🇳🇿", t:2, c:"OC"},
-  {n:"Cuba", f:"🇨🇺", t:2, c:"NA"},
-  {n:"Belgium", f:"🇧🇪", t:2, c:"EU"},
-  {n:"Austria", f:"🇦🇹", t:2, c:"EU"},
+  {n:"Netherlands", f:"🇳🇱", c:"EU"},
+  {n:"Sweden", f:"🇸🇪", c:"EU"},
+  {n:"Norway", f:"🇳🇴", c:"EU"},
+  {n:"Switzerland", f:"🇨🇭", c:"EU"},
+  {n:"Portugal", f:"🇵🇹", c:"EU"},
+  {n:"Ireland", f:"🇮🇪", c:"EU"},
+  {n:"Poland", f:"🇵🇱", c:"EU"},
+  {n:"Belgium", f:"🇧🇪", c:"EU"},
+  {n:"Austria", f:"🇦🇹", c:"EU"},
+  {n:"Denmark", f:"🇩🇰", c:"EU"},
+  {n:"Finland", f:"🇫🇮", c:"EU"},
+  {n:"Thailand", f:"🇹🇭", c:"AS"},
+  {n:"Vietnam", f:"🇻🇳", c:"AS"},
+  {n:"Indonesia", f:"🇮🇩", c:"AS"},
+  {n:"Saudi Arabia", f:"🇸🇦", c:"AS"},
+  {n:"Nigeria", f:"🇳🇬", c:"AF"},
+  {n:"Kenya", f:"🇰🇪", c:"AF"},
+  {n:"Chile", f:"🇨🇱", c:"SA"},
+  {n:"Peru", f:"🇵🇪", c:"SA"},
+  {n:"Colombia", f:"🇨🇴", c:"SA"},
 
-  {n:"Morocco", f:"🇲🇦", t:3, c:"AF"},
-  {n:"Israel", f:"🇮🇱", t:3, c:"AS"},
-  {n:"United Arab Emirates", f:"🇦🇪", t:3, c:"AS"},
-  {n:"Ukraine", f:"🇺🇦", t:3, c:"EU"},
-  {n:"Denmark", f:"🇩🇰", t:3, c:"EU"},
-  {n:"Finland", f:"🇫🇮", t:3, c:"EU"},
-  {n:"Czechia", f:"🇨🇿", t:3, c:"EU"},
-  {n:"Hungary", f:"🇭🇺", t:3, c:"EU"},
-  {n:"Romania", f:"🇷🇴", t:3, c:"EU"},
-  {n:"Philippines", f:"🇵🇭", t:3, c:"AS"},
-  {n:"Malaysia", f:"🇲🇾", t:3, c:"AS"},
-  {n:"Pakistan", f:"🇵🇰", t:3, c:"AS"},
-  {n:"Bangladesh", f:"🇧🇩", t:3, c:"AS"},
-  {n:"Iran", f:"🇮🇷", t:3, c:"AS"},
-  {n:"Iraq", f:"🇮🇶", t:3, c:"AS"},
-  {n:"Venezuela", f:"🇻🇪", t:3, c:"SA"},
-  {n:"Ecuador", f:"🇪🇨", t:3, c:"SA"},
-  {n:"Ethiopia", f:"🇪🇹", t:3, c:"AF"},
-  {n:"Ghana", f:"🇬🇭", t:3, c:"AF"},
-  {n:"Iceland", f:"🇮🇸", t:3, c:"EU"},
+  {n:"New Zealand", f:"🇳🇿", c:"OC"},
+  {n:"Cuba", f:"🇨🇺", c:"NA"},
+  {n:"Ukraine", f:"🇺🇦", c:"EU"},
+  {n:"Israel", f:"🇮🇱", c:"AS"},
+  {n:"Morocco", f:"🇲🇦", c:"AF"},
+  {n:"United Arab Emirates", f:"🇦🇪", c:"AS"},
+  {n:"Czechia", f:"🇨🇿", c:"EU"},
+  {n:"Hungary", f:"🇭🇺", c:"EU"},
+  {n:"Romania", f:"🇷🇴", c:"EU"},
+  {n:"Philippines", f:"🇵🇭", c:"AS"},
+  {n:"Malaysia", f:"🇲🇾", c:"AS"},
+  {n:"Pakistan", f:"🇵🇰", c:"AS"},
+  {n:"Bangladesh", f:"🇧🇩", c:"AS"},
+  {n:"Iran", f:"🇮🇷", c:"AS"},
+  {n:"Iraq", f:"🇮🇶", c:"AS"},
+  {n:"Venezuela", f:"🇻🇪", c:"SA"},
+  {n:"Ecuador", f:"🇪🇨", c:"SA"},
+  {n:"Ethiopia", f:"🇪🇹", c:"AF"},
+  {n:"Ghana", f:"🇬🇭", c:"AF"},
+  {n:"Iceland", f:"🇮🇸", c:"EU"},
 
-  {n:"Croatia", f:"🇭🇷", t:4, c:"EU"},
-  {n:"Serbia", f:"🇷🇸", t:4, c:"EU"},
-  {n:"Slovakia", f:"🇸🇰", t:4, c:"EU"},
-  {n:"Slovenia", f:"🇸🇮", t:4, c:"EU"},
-  {n:"Bulgaria", f:"🇧🇬", t:4, c:"EU"},
-  {n:"Latvia", f:"🇱🇻", t:4, c:"EU"},
-  {n:"Lithuania", f:"🇱🇹", t:4, c:"EU"},
-  {n:"Estonia", f:"🇪🇪", t:4, c:"EU"},
-  {n:"Tunisia", f:"🇹🇳", t:4, c:"AF"},
-  {n:"Algeria", f:"🇩🇿", t:4, c:"AF"},
-  {n:"Jordan", f:"🇯🇴", t:4, c:"AS"},
-  {n:"Lebanon", f:"🇱🇧", t:4, c:"AS"},
-  {n:"Qatar", f:"🇶🇦", t:4, c:"AS"},
-  {n:"Sri Lanka", f:"🇱🇰", t:4, c:"AS"},
-  {n:"Nepal", f:"🇳🇵", t:4, c:"AS"},
-  {n:"Myanmar", f:"🇲🇲", t:4, c:"AS"},
-  {n:"Cambodia", f:"🇰🇭", t:4, c:"AS"},
-  {n:"Uruguay", f:"🇺🇾", t:4, c:"SA"},
-  {n:"Bolivia", f:"🇧🇴", t:4, c:"SA"},
-  {n:"Costa Rica", f:"🇨🇷", t:4, c:"NA"},
-  {n:"Senegal", f:"🇸🇳", t:4, c:"AF"},
-  {n:"Tanzania", f:"🇹🇿", t:4, c:"AF"},
-  {n:"Zimbabwe", f:"🇿🇼", t:4, c:"AF"},
-  {n:"Oman", f:"🇴🇲", t:4, c:"AS"},
+  {n:"Singapore", f:"🇸🇬", c:"AS"},
+  {n:"Jamaica", f:"🇯🇲", c:"NA"},
+  {n:"Cyprus", f:"🇨🇾", c:"EU"},
+  {n:"Croatia", f:"🇭🇷", c:"EU"},
+  {n:"Serbia", f:"🇷🇸", c:"EU"},
+  {n:"Tunisia", f:"🇹🇳", c:"AF"},
+  {n:"Algeria", f:"🇩🇿", c:"AF"},
+  {n:"Libya", f:"🇱🇾", c:"AF"},
+  {n:"Jordan", f:"🇯🇴", c:"AS"},
+  {n:"Lebanon", f:"🇱🇧", c:"AS"},
+  {n:"Qatar", f:"🇶🇦", c:"AS"},
+  {n:"Kuwait", f:"🇰🇼", c:"AS"},
+  {n:"Oman", f:"🇴🇲", c:"AS"},
+  {n:"Bahrain", f:"🇧🇭", c:"AS"},
+  {n:"Yemen", f:"🇾🇪", c:"AS"},
+  {n:"Syria", f:"🇸🇾", c:"AS"},
+  {n:"Afghanistan", f:"🇦🇫", c:"AS"},
+  {n:"Nepal", f:"🇳🇵", c:"AS"},
+  {n:"Sri Lanka", f:"🇱🇰", c:"AS"},
+  {n:"Myanmar", f:"🇲🇲", c:"AS"},
 
-  {n:"Eswatini", f:"🇸🇿", t:5, c:"AF"},
-  {n:"Lesotho", f:"🇱🇸", t:5, c:"AF"},
-  {n:"Kiribati", f:"🇰🇮", t:5, c:"OC"},
-  {n:"Tuvalu", f:"🇹🇻", t:5, c:"OC"},
-  {n:"Vanuatu", f:"🇻🇺", t:5, c:"OC"},
-  {n:"Palau", f:"🇵🇼", t:5, c:"OC"},
-  {n:"Comoros", f:"🇰🇲", t:5, c:"AF"},
-  {n:"Djibouti", f:"🇩🇯", t:5, c:"AF"},
-  {n:"Eritrea", f:"🇪🇷", t:5, c:"AF"},
-  {n:"Bhutan", f:"🇧🇹", t:5, c:"AS"},
-  {n:"Brunei", f:"🇧🇳", t:5, c:"AS"},
-  {n:"Timor-Leste", f:"🇹🇱", t:5, c:"AS"},
-  {n:"Suriname", f:"🇸🇷", t:5, c:"SA"},
-  {n:"Guyana", f:"🇬🇾", t:5, c:"SA"},
-  {n:"Belize", f:"🇧🇿", t:5, c:"NA"},
-  {n:"Moldova", f:"🇲🇩", t:5, c:"EU"},
-  {n:"Montenegro", f:"🇲🇪", t:5, c:"EU"},
-  {n:"North Macedonia", f:"🇲🇰", t:5, c:"EU"},
-  {n:"Turkmenistan", f:"🇹🇲", t:5, c:"AS"},
-  {n:"Kyrgyzstan", f:"🇰🇬", t:5, c:"AS"},
-  {n:"Tajikistan", f:"🇹🇯", t:5, c:"AS"},
-  {n:"Gabon", f:"🇬🇦", t:5, c:"AF"},
-  {n:"Togo", f:"🇹🇬", t:5, c:"AF"},
-  {n:"Benin", f:"🇧🇯", t:5, c:"AF"},
-  {n:"Malawi", f:"🇲🇼", t:5, c:"AF"},
-  {n:"Mauritania", f:"🇲🇷", t:5, c:"AF"},
-  {n:"Andorra", f:"🇦🇩", t:5, c:"EU"},
-  {n:"San Marino", f:"🇸🇲", t:5, c:"EU"},
-  {n:"Liechtenstein", f:"🇱🇮", t:5, c:"EU"},
-  {n:"Kazakhstan", f:"🇰🇿", t:5, c:"AS"},
-  {n:"Azerbaijan", f:"🇦🇿", t:5, c:"AS"},
-  {n:"Armenia", f:"🇦🇲", t:5, c:"AS"},
-  {n:"Georgia", f:"🇬🇪", t:5, c:"AS"},
-  {n:"Laos", f:"🇱🇦", t:5, c:"AS"},
-  {n:"Mongolia", f:"🇲🇳", t:5, c:"AS"},
+  {n:"Cambodia", f:"🇰🇭", c:"AS"},
+  {n:"Laos", f:"🇱🇦", c:"AS"},
+  {n:"Mongolia", f:"🇲🇳", c:"AS"},
+  {n:"North Korea", f:"🇰🇵", c:"AS"},
+  {n:"Kazakhstan", f:"🇰🇿", c:"AS"},
+  {n:"Uzbekistan", f:"🇺🇿", c:"AS"},
+  {n:"Slovakia", f:"🇸🇰", c:"EU"},
+  {n:"Slovenia", f:"🇸🇮", c:"EU"},
+  {n:"Bulgaria", f:"🇧🇬", c:"EU"},
+  {n:"Belarus", f:"🇧🇾", c:"EU"},
+  {n:"Lithuania", f:"🇱🇹", c:"EU"},
+  {n:"Latvia", f:"🇱🇻", c:"EU"},
+  {n:"Estonia", f:"🇪🇪", c:"EU"},
+  {n:"Luxembourg", f:"🇱🇺", c:"EU"},
+  {n:"Malta", f:"🇲🇹", c:"EU"},
+  {n:"Albania", f:"🇦🇱", c:"EU"},
+  {n:"Bosnia and Herzegovina", f:"🇧🇦", c:"EU"},
+  {n:"North Macedonia", f:"🇲🇰", c:"EU"},
+  {n:"Montenegro", f:"🇲🇪", c:"EU"},
+  {n:"Moldova", f:"🇲🇩", c:"EU"},
+
+  {n:"Uruguay", f:"🇺🇾", c:"SA"},
+  {n:"Paraguay", f:"🇵🇾", c:"SA"},
+  {n:"Bolivia", f:"🇧🇴", c:"SA"},
+  {n:"Panama", f:"🇵🇦", c:"NA"},
+  {n:"Costa Rica", f:"🇨🇷", c:"NA"},
+  {n:"Guatemala", f:"🇬🇹", c:"NA"},
+  {n:"Honduras", f:"🇭🇳", c:"NA"},
+  {n:"El Salvador", f:"🇸🇻", c:"NA"},
+  {n:"Nicaragua", f:"🇳🇮", c:"NA"},
+  {n:"Dominican Republic", f:"🇩🇴", c:"NA"},
+  {n:"Trinidad and Tobago", f:"🇹🇹", c:"NA"},
+  {n:"Haiti", f:"🇭🇹", c:"NA"},
+  {n:"Senegal", f:"🇸🇳", c:"AF"},
+  {n:"Ivory Coast", f:"🇨🇮", c:"AF"},
+  {n:"Cameroon", f:"🇨🇲", c:"AF"},
+  {n:"Tanzania", f:"🇹🇿", c:"AF"},
+  {n:"Uganda", f:"🇺🇬", c:"AF"},
+  {n:"Zimbabwe", f:"🇿🇼", c:"AF"},
+  {n:"Zambia", f:"🇿🇲", c:"AF"},
+  {n:"Mozambique", f:"🇲🇿", c:"AF"},
+
+  {n:"Angola", f:"🇦🇴", c:"AF"},
+  {n:"Namibia", f:"🇳🇦", c:"AF"},
+  {n:"Botswana", f:"🇧🇼", c:"AF"},
+  {n:"Madagascar", f:"🇲🇬", c:"AF"},
+  {n:"Mauritius", f:"🇲🇺", c:"AF"},
+  {n:"Rwanda", f:"🇷🇼", c:"AF"},
+  {n:"Mali", f:"🇲🇱", c:"AF"},
+  {n:"Niger", f:"🇳🇪", c:"AF"},
+  {n:"Chad", f:"🇹🇩", c:"AF"},
+  {n:"Sudan", f:"🇸🇩", c:"AF"},
+  {n:"South Sudan", f:"🇸🇸", c:"AF"},
+  {n:"Somalia", f:"🇸🇴", c:"AF"},
+  {n:"DR Congo", f:"🇨🇩", c:"AF"},
+  {n:"Republic of the Congo", f:"🇨🇬", c:"AF"},
+  {n:"Mauritania", f:"🇲🇷", c:"AF"},
+  {n:"Bahamas", f:"🇧🇸", c:"NA"},
+  {n:"Barbados", f:"🇧🇧", c:"NA"},
+  {n:"Fiji", f:"🇫🇯", c:"OC"},
+  {n:"Papua New Guinea", f:"🇵🇬", c:"OC"},
+  {n:"Armenia", f:"🇦🇲", c:"AS"},
+
+  {n:"Azerbaijan", f:"🇦🇿", c:"AS"},
+  {n:"Georgia", f:"🇬🇪", c:"AS"},
+  {n:"Turkmenistan", f:"🇹🇲", c:"AS"},
+  {n:"Kyrgyzstan", f:"🇰🇬", c:"AS"},
+  {n:"Tajikistan", f:"🇹🇯", c:"AS"},
+  {n:"Brunei", f:"🇧🇳", c:"AS"},
+  {n:"Maldives", f:"🇲🇻", c:"AS"},
+  {n:"Bhutan", f:"🇧🇹", c:"AS"},
+  {n:"Timor-Leste", f:"🇹🇱", c:"AS"},
+  {n:"Andorra", f:"🇦🇩", c:"EU"},
+  {n:"San Marino", f:"🇸🇲", c:"EU"},
+  {n:"Liechtenstein", f:"🇱🇮", c:"EU"},
+  {n:"Monaco", f:"🇲🇨", c:"EU"},
+  {n:"Vatican City", f:"🇻🇦", c:"EU"},
+  {n:"Eswatini", f:"🇸🇿", c:"AF"},
+  {n:"Lesotho", f:"🇱🇸", c:"AF"},
+  {n:"Djibouti", f:"🇩🇯", c:"AF"},
+  {n:"Eritrea", f:"🇪🇷", c:"AF"},
+  {n:"Gabon", f:"🇬🇦", c:"AF"},
+  {n:"Togo", f:"🇹🇬", c:"AF"},
+
+  {n:"Benin", f:"🇧🇯", c:"AF"},
+  {n:"Malawi", f:"🇲🇼", c:"AF"},
+  {n:"Burkina Faso", f:"🇧🇫", c:"AF"},
+  {n:"Burundi", f:"🇧🇮", c:"AF"},
+  {n:"Central African Republic", f:"🇨🇫", c:"AF"},
+  {n:"Equatorial Guinea", f:"🇬🇶", c:"AF"},
+  {n:"Gambia", f:"🇬🇲", c:"AF"},
+  {n:"Guinea", f:"🇬🇳", c:"AF"},
+  {n:"Guinea-Bissau", f:"🇬🇼", c:"AF"},
+  {n:"Liberia", f:"🇱🇷", c:"AF"},
+  {n:"Sierra Leone", f:"🇸🇱", c:"AF"},
+  {n:"Cabo Verde", f:"🇨🇻", c:"AF"},
+  {n:"Sao Tome and Principe", f:"🇸🇹", c:"AF"},
+  {n:"Seychelles", f:"🇸🇨", c:"AF"},
+  {n:"Comoros", f:"🇰🇲", c:"AF"},
+  {n:"Suriname", f:"🇸🇷", c:"SA"},
+  {n:"Guyana", f:"🇬🇾", c:"SA"},
+  {n:"Belize", f:"🇧🇿", c:"NA"},
+  {n:"Palestine", f:"🇵🇸", c:"AS"},
+  {n:"Antigua and Barbuda", f:"🇦🇬", c:"NA"},
+
+  {n:"Dominica", f:"🇩🇲", c:"NA"},
+  {n:"Grenada", f:"🇬🇩", c:"NA"},
+  {n:"Saint Kitts and Nevis", f:"🇰🇳", c:"NA"},
+  {n:"Saint Lucia", f:"🇱🇨", c:"NA"},
+  {n:"Saint Vincent and the Grenadines", f:"🇻🇨", c:"NA"},
+  {n:"Kiribati", f:"🇰🇮", c:"OC"},
+  {n:"Marshall Islands", f:"🇲🇭", c:"OC"},
+  {n:"Micronesia", f:"🇫🇲", c:"OC"},
+  {n:"Nauru", f:"🇳🇷", c:"OC"},
+  {n:"Palau", f:"🇵🇼", c:"OC"},
+  {n:"Samoa", f:"🇼🇸", c:"OC"},
+  {n:"Solomon Islands", f:"🇸🇧", c:"OC"},
+  {n:"Tonga", f:"🇹🇴", c:"OC"},
+  {n:"Tuvalu", f:"🇹🇻", c:"OC"},
+  {n:"Vanuatu", f:"🇻🇺", c:"OC"},
 ];
 
 /* ============================================================ CONFIG */
-const QUESTIONS_PER_LEVEL = 10;
-const MAX_LEVEL = 5;
-const PASS_MARK = 7;
+const PER_LEVEL = 10;                 // flags per level
 const STARTING_LIVES = 3;
-const LEVEL_NAMES = { 1:"Rookie", 2:"Explorer", 3:"Navigator", 4:"Globetrotter", 5:"Cartographer" };
+const PASS_RATIO = 0.7;               // need 70% to advance
+
+// Split the ordered list into levels of 10 (last level takes the remainder).
+const LEVELS = [];
+for (let i = 0; i < COUNTRIES.length; i += PER_LEVEL) LEVELS.push(COUNTRIES.slice(i, i + PER_LEVEL));
+const MAX_LEVEL = LEVELS.length;      // 20
+const TOTAL_COUNTRIES = COUNTRIES.length; // 195
+
+// 5 difficulty bands across the levels
+const BANDS = [
+  {name:"Beginner", be:"🌱"},
+  {name:"Explorer", be:"🧭"},
+  {name:"Adventurer", be:"⛰️"},
+  {name:"Expert", be:"🎯"},
+  {name:"Legend", be:"👑"},
+];
+const LEVELS_PER_BAND = Math.ceil(MAX_LEVEL / BANDS.length);
+function bandIndex(level){ return Math.min(Math.floor((level - 1) / LEVELS_PER_BAND), BANDS.length - 1); }
+function bandName(level){ return BANDS[bandIndex(level)].name; }
 
 const CHEERS = ["Correct! 🎉", "Yes! 🌟", "Awesome! 🚀", "You got it! 👏", "Great job! 💪", "Woohoo! 🎊"];
 const KINDLY = ["Good try! 😊", "Nice try! 🙂", "Almost! 👍", "Keep going! 🌈"];
 
 /* ============================================================ STATE */
 let level = 1, qIndex = 0, correctCount = 0, lives = STARTING_LIVES;
-let deck = [], locked = false;
+let deck = [], qTotal = PER_LEVEL, locked = false;
 let unlockedLevel = loadProgress();
 let soundOn = loadSound();
 const card = document.getElementById("card");
@@ -319,6 +395,7 @@ function saveProgress(lv){ try { localStorage.setItem("cg_unlocked",String(lv));
 function loadSound(){ try { return localStorage.getItem("cg_sound")!=="off"; } catch(e){ return true; } }
 function saveSound(v){ try { localStorage.setItem("cg_sound", v?"on":"off"); } catch(e){} }
 function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function passMark(len){ return Math.ceil(len * PASS_RATIO); }
 
 /* ---------- sound (Web Audio, no files) ---------- */
 let audioCtx = null;
@@ -339,8 +416,8 @@ function tone(freqs, dur, type){
     });
   }catch(e){}
 }
-const sndCorrect = ()=> tone([523,659,784], 0.22, "triangle"); // happy up-chime
-const sndWrong   = ()=> tone([300,220], 0.25, "sine");         // gentle low
+const sndCorrect = ()=> tone([523,659,784], 0.22, "triangle");
+const sndWrong   = ()=> tone([300,220], 0.25, "sine");
 const sndWin     = ()=> tone([523,659,784,1047], 0.3, "triangle");
 const sndTap     = ()=> tone([440], 0.05, "square");
 
@@ -361,72 +438,76 @@ function confetti(n){
   }
 }
 
-/* ---------- deck ---------- */
+/* ---------- deck: this level's flags + smart wrong answers ---------- */
 function buildDeck(lv){
-  const pool = COUNTRIES.filter(c=>c.t===lv);
-  const picks = shuffle(pool).slice(0, QUESTIONS_PER_LEVEL);
-  return picks.map(answer=>{
-    const sameContinent = pool.filter(c=>c.n!==answer.n && c.c===answer.c);
-    const sameTier = pool.filter(c=>c.n!==answer.n);
+  const answers = shuffle(LEVELS[lv-1]);
+  return answers.map(answer=>{
+    const sameC = COUNTRIES.filter(c=>c.n!==answer.n && c.c===answer.c);
     const anywhere = COUNTRIES.filter(c=>c.n!==answer.n);
     const distractors=[];
-    for(const bucket of [shuffle(sameContinent),shuffle(sameTier),shuffle(anywhere)]){
-      for(const c of bucket){ if(distractors.length>=3) break; if(c.n!==answer.n && !distractors.some(d=>d.n===c.n)) distractors.push(c); }
+    for(const bucket of [shuffle(sameC), shuffle(anywhere)]){
+      for(const c of bucket){ if(distractors.length>=3) break; if(!distractors.some(d=>d.n===c.n)) distractors.push(c); }
       if(distractors.length>=3) break;
     }
     return { answer, options: shuffle([answer,...distractors]) };
   });
 }
 
-/* ============================================================ SCREENS */
+/* ============================================================ UI bits */
 function soundBtnHtml(){ return `<button class="iconbtn" id="soundBtn" title="Sound on/off" aria-label="Sound">${soundOn?"🔊":"🔇"}</button>`; }
 function wireSoundBtn(){ const b=document.getElementById("soundBtn"); if(b) b.onclick=()=>{ soundOn=!soundOn; saveSound(soundOn); b.textContent=soundOn?"🔊":"🔇"; if(soundOn) sndTap(); }; }
 
+/* ============================================================ SCREENS */
 function renderStart(){
-  const pips=[];
-  for(let i=1;i<=MAX_LEVEL;i++){
-    const cls = i<unlockedLevel?"done":i===unlockedLevel?"current":"";
-    const mark = i<unlockedLevel?"✓":i;
-    pips.push(`<div class="lvpip ${cls}"><span class="n">${mark}</span>${LEVEL_NAMES[i]}</div>`);
-  }
+  const cleared = unlockedLevel - 1;
+  const pct = (cleared / MAX_LEVEL) * 100;
+  const bands = BANDS.map((b,i)=>{
+    const lastLevelInBand = (i+1)*LEVELS_PER_BAND;
+    const cls = cleared >= lastLevelInBand ? "done" : bandIndex(unlockedLevel)===i ? "current" : "";
+    return `<div class="band ${cls}"><span class="be">${b.be}</span>${b.name}</div>`;
+  }).join("");
+
   card.className="card fade";
   card.innerHTML=`
     <div class="topbar"><span></span><div class="topright">${soundBtnHtml()}</div></div>
     <div class="hero-emoji">🌍</div>
     <h1>Guess the Country</h1>
-    <p class="subtitle">Look at the flag, then <b>tap the right country!</b></p>
+    <p class="subtitle">Learn <b>all ${TOTAL_COUNTRIES} flags</b> in the world across <b>${MAX_LEVEL} levels</b>!</p>
     <ul class="rules">
       <li><span class="ic">👀</span><span>See a <b>flag</b>? Tap the country you think it is.</span></li>
       <li><span class="ic">✅</span><span>Green means <b>correct</b>. Great job!</span></li>
       <li><span class="ic">💡</span><span>Wrong? We'll <b>show you</b> the right one.</span></li>
       <li><span class="ic">❤️</span><span>You have <b>3 hearts</b> each level.</span></li>
-      <li><span class="ic">🏆</span><span>Get <b>7 or more</b> to reach the next level!</span></li>
+      <li><span class="ic">👑</span><span>Finish all ${MAX_LEVEL} levels to become a <b>World Flag Master!</b></span></li>
     </ul>
-    <div class="levelmap">${pips.join("")}</div>
+    <div class="campaign">
+      <div class="label"><span>Your journey</span><span><b>${cleared}</b> / ${MAX_LEVEL} levels done</span></div>
+      <div class="cbar"><i style="width:${pct}%"></i></div>
+      <div class="bands">${bands}</div>
+    </div>
     <button class="btn big pulse" id="playBtn">${unlockedLevel>1?`▶ Play Level ${unlockedLevel}`:"▶ Let's Play!"}</button>
     <button class="btn secondary" id="restartBtn">🔄 Start from the Beginning</button>
   `;
   wireSoundBtn();
   document.getElementById("playBtn").onclick=()=>{ sndTap(); startLevel(unlockedLevel); };
-  const rb=document.getElementById("restartBtn");
-  if(rb) rb.onclick=()=>{ sndTap(); unlockedLevel=1; saveProgress(1); startLevel(1); };
+  document.getElementById("restartBtn").onclick=()=>{ sndTap(); unlockedLevel=1; saveProgress(1); startLevel(1); };
 }
 
-function startLevel(lv){ level=lv; qIndex=0; correctCount=0; lives=STARTING_LIVES; deck=buildDeck(lv); renderQuestion(); }
+function startLevel(lv){ level=lv; qIndex=0; correctCount=0; lives=STARTING_LIVES; deck=buildDeck(lv); qTotal=deck.length; renderQuestion(); }
 
 function renderQuestion(){
   locked=false;
   const q=deck[qIndex];
   const hearts="❤️".repeat(lives)+"🖤".repeat(STARTING_LIVES-lives);
-  const pct=(qIndex/QUESTIONS_PER_LEVEL)*100;
+  const pct=(qIndex/qTotal)*100;
   card.className="card";
   card.innerHTML=`
     <div class="topbar">
-      <span class="pill">Level ${level} · ${LEVEL_NAMES[level]}</span>
+      <span class="pill">Level ${level}/${MAX_LEVEL} · ${bandName(level)}</span>
       <div class="topright"><span class="lives" title="Hearts left">${hearts}</span>${soundBtnHtml()}<button class="iconbtn" id="homeBtn" title="Home" aria-label="Home">🏠</button></div>
     </div>
     <div class="progress"><i style="width:${pct}%"></i></div>
-    <div class="qcount">Flag ${qIndex+1} of ${QUESTIONS_PER_LEVEL} · Stars ${correctCount} ⭐</div>
+    <div class="qcount">Flag ${qIndex+1} of ${qTotal} · Stars ${correctCount} ⭐</div>
     <div class="flagwrap"><div class="flag">${q.answer.f}</div></div>
     <div class="qtext">Whose flag is this?</div>
     <div class="qhint">👇 Tap the country you think it is</div>
@@ -451,7 +532,6 @@ function choose(btn, opt, q){
   locked=true;
   const isRight = opt.n===q.answer.n;
   const buttons=[...document.querySelectorAll(".opt")];
-
   buttons.forEach(b=>{
     b.disabled=true;
     const name=b.querySelector("span").textContent;
@@ -462,7 +542,7 @@ function choose(btn, opt, q){
   });
 
   const slot=document.getElementById("bannerSlot");
-  const last = qIndex>=QUESTIONS_PER_LEVEL-1;
+  const last = qIndex>=qTotal-1;
   const nextLabel = last ? "See my score ⭐" : "Next flag ▶";
 
   if(isRight){
@@ -486,8 +566,6 @@ function choose(btn, opt, q){
         <button class="btn big pulse nextbtn" id="nextBtn">${lives<=0 ? "See my score ⭐" : nextLabel}</button>
       </div>`;
   }
-
-  // scroll the banner into view so kids always see the Next button on small screens
   const banner=slot.querySelector(".banner");
   if(banner) banner.scrollIntoView({behavior:"smooth", block:"nearest"});
 
@@ -495,31 +573,33 @@ function choose(btn, opt, q){
     sndTap();
     if(lives<=0){ renderResults(false); return; }
     qIndex++;
-    if(qIndex>=QUESTIONS_PER_LEVEL) renderResults(correctCount>=PASS_MARK);
+    if(qIndex>=qTotal) renderResults(correctCount>=passMark(qTotal));
     else renderQuestion();
   };
 }
 
 function renderResults(passed){
   const outOfLives = lives<=0;
-  const stars = correctCount>=10?3:correctCount>=8?2:correctCount>=PASS_MARK?1:0;
+  const ratio = correctCount/qTotal;
+  const stars = ratio>=1?3:ratio>=0.9?2:passed?1:0;
   const starRow="⭐".repeat(stars)+"☆".repeat(3-stars);
+  const need = passMark(qTotal);
   let emoji,title,sub;
   const wonGame = passed && level>=MAX_LEVEL;
 
-  if(wonGame){ emoji="🏆"; title="You did it!"; sub="You finished all 5 levels. You're a flag champion!"; }
-  else if(passed){ emoji=pick(["🎉","🌟","🚀","🔥","🎊"]); title=`Level ${level} done!`; sub=`Amazing! Level ${level+1} (${LEVEL_NAMES[level+1]}) is open now.`; }
+  if(wonGame){ emoji="👑"; title="World Flag Master!"; sub=`Incredible! You finished all ${MAX_LEVEL} levels and know all ${TOTAL_COUNTRIES} flags in the world!`; }
+  else if(passed){ emoji=pick(["🎉","🌟","🚀","🔥","🎊"]); title=`Level ${level} done!`; sub=`Amazing! Level ${level+1} (${bandName(level+1)}) is open now.`; }
   else if(outOfLives){ emoji="💪"; title="Out of hearts!"; sub=`You got ${correctCount} right. Take a breath and try again. You've got this!`; }
-  else { emoji="🙂"; title="So close!"; sub=`You got ${correctCount}. You need 7 to move up. Give it another go!`; }
+  else { emoji="🙂"; title="So close!"; sub=`You got ${correctCount}. You need ${need} to move up. Give it another go!`; }
 
   if(passed){ unlockedLevel=Math.max(unlockedLevel, Math.min(level+1,MAX_LEVEL)); saveProgress(unlockedLevel); }
-  if(passed){ sndWin(); confetti(80); } else { sndWrong(); }
+  if(passed){ sndWin(); confetti(wonGame?140:80); } else { sndWrong(); }
 
   card.className="card fade";
   card.innerHTML=`
     <div class="topbar"><span></span><div class="topright">${soundBtnHtml()}</div></div>
     <div class="result-emoji">${emoji}</div>
-    <div class="score-big">${correctCount}<span style="font-size:24px;color:var(--muted)">/${QUESTIONS_PER_LEVEL}</span></div>
+    <div class="score-big">${correctCount}<span style="font-size:24px;color:var(--muted)">/${qTotal}</span></div>
     <div class="stars">${starRow}</div>
     <h1 style="font-size:28px">${title}</h1>
     <div class="score-sub">${sub}</div>
