@@ -4,7 +4,32 @@
 <meta name="description" content="A fun flag-guessing game for kids. Learn all 195 country flags across 20 levels!" />
 <meta name="theme-color" content="#5b21b6" />
 
+<link rel="preload" href="fonts/baloo2.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/pacifico.woff2" as="font" type="font/woff2" crossorigin>
+
 <style>
+  /* The Mehdees wordmark, identical to the mehdee.com masthead. */
+  @font-face { font-family: 'Baloo 2'; font-weight: 800; font-display: swap; src: url('fonts/baloo2.woff2') format('woff2'); }
+  @font-face { font-family: 'Pacifico'; font-weight: 400; font-display: swap; src: url('fonts/pacifico.woff2') format('woff2'); }
+  /* body centres its child, so the bar is pinned instead of flowing */
+  .mehdeebar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 6;
+    display: flex; align-items: center;
+    padding: calc(11px + env(safe-area-inset-top)) max(14px, env(safe-area-inset-left)) 11px;
+    background: #150F2B; border-bottom: 1px solid #37276360;
+  }
+  body { padding-top: calc(58px + env(safe-area-inset-top)) !important; }
+  .wordmark { display: flex; align-items: baseline; gap: 8px; text-decoration: none; }
+  .wordmark .the {
+    font-family: 'Pacifico', 'Snell Roundhand', cursive;
+    font-size: 1.05rem; color: #FF2D95;
+    transform: rotate(-4deg) translateY(-2px);
+  }
+  .wordmark .mehdees {
+    font-family: 'Baloo 2', 'Arial Rounded MT Bold', system-ui, sans-serif;
+    font-weight: 800; font-size: 1.3rem; letter-spacing: 0.02em;
+    color: #FCF2E1; text-shadow: 0 0 18px #ff2d9538;
+  }
   :root {
     --bg1: #6d28d9; --bg2: #2563eb; --bg3: #db2777;
     --card: #ffffff; --ink: #1e1b2e; --muted: #6b7280;
@@ -129,6 +154,12 @@
   @media (prefers-reduced-motion: reduce) { * { animation-duration: 0.01ms !important; } }
 </style>
 
+<header class="mehdeebar">
+  <a class="wordmark" href="https://mehdee.com/" aria-label="The Mehdees, home">
+    <span class="the">The</span><span class="mehdees">MEHDEES</span>
+  </a>
+</header>
+
 <div class="blob a"></div>
 <div class="blob b"></div>
 <div class="blob c"></div>
@@ -136,7 +167,7 @@
 
 <div class="app">
   <div class="card" id="card"></div>
-  <footer>🌍 Guess the Country · all 195 flags · 20 levels</footer>
+  <footer>🌍 Guess the Country · all 195 flags · 20 levels<br>a free game by <a href="https://mehdee.com/games/" style="color:inherit">The Mehdees</a></footer>
 </div>
 
 <script>
